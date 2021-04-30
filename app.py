@@ -21,5 +21,22 @@ def search(name):
 
 @app.route('/save')
 def save():
-	db.movie.insert_one
-     
+	data = request.get_json()
+	found = mongo.db.movie.find_one({'id' : data.id})
+	if found :
+		found.comments.append(data.comment)
+	else :
+		mongo.db.movie.insert_one({'id' : data.id, 'rating' : {0, 0}, 'comments' : [{data.comment}]})	
+    return mongo.db.movie.find_one({'id' : data.id})
+
+@app.route('/rate')
+def rate():
+	data = request.get_json()
+	found = mongo.db.movie.find_one({'id' : data.id})	
+	if found :
+		found.rating.value = (found.rating.value * found.rating.count + data.rating)/(found.rating.count + 1)
+		found.rating.count = found.rating.count + 1
+	else :
+		mongo.db.movie.insert_one({'id' : data.id, 'rating' : {data.rating, 1}, 'comments' : []})
+	return mongo.db.movie.find_one({'id' : data.id})
+
