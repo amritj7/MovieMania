@@ -9,8 +9,11 @@ class Login extends React.Component {
     super(props);
     this.state = [];
     this.responseGoogle = this.responseGoogle.bind(this);
+    this.history = this.props.history;
   }
   responseGoogle(response) {
+    localStorage.setItem("data", response.profileObj.email);
+    this.history.push("/home");
     console.log(response);
   }
   render() {
@@ -28,11 +31,6 @@ class Login extends React.Component {
           cookiePolicy={"single_host_origin"}
           isSignedIn={true}
         />
-        {/* <GoogleLogout
-          clientId="427815533001-pfdvja4nu5kc7dp33j48b7c2e9vcvvta.apps.googleusercontent.com"
-          buttonText="Logout"
-          onLogoutSuccess={ }
-        ></GoogleLogout> */}
       </div>
     );
   }
