@@ -3,12 +3,13 @@ import json
 
 from flask import Flask
 from flask_pymongo import PyMongo
+import pymongo
 
 app = Flask(__name__)
-# app.config["MONGO_URI"] = "mongodb://localhost:27017/mydb"
-# mongo = PyMongo(app)
-# db = mongodb_client.db
 
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+mydb = myclient["mydatabase"]
+movieCollection = mydb["movie"]
 
 @app.route('/search/<name>', methods=['POST', 'GET'])
 def search(name):
@@ -21,6 +22,16 @@ def search(name):
     response = requests.request(
         "GET", url, headers=headers, params=querystring)
     return json.dumps(response.json()['d'][:5])
+
+@app.route('/display/<id>', methods=['POST', 'GET'])
+def display(id):
+    movie = movieCollection.find_one({'id' : id})
+    if not movie:
+        movie = movieCollection.insert_one({'id' : id, 'rating' : {'userCount' : 0, 'ratings' : 0}, 'comments' : []})
+    del movie["_id"]
+    return movie
+
+
 
 # @app.route('/comment', methods=['POST', 'GET'])
 # def comment():

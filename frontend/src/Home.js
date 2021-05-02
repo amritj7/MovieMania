@@ -10,10 +10,24 @@ class Home extends React.Component {
     this.history = this.props.history;
     this.state.searchText = "";
     this.searchMovie = this.searchMovie.bind(this);
+    this.renderSearchedMovieList = this.renderSearchedMovieList.bind(this);
     this.state.searchedMovieList = [];
   }
+
+  handleMovie(movie) {
+    axios
+      .post(URL + "display/" + movie.id)
+      .then((response) => {
+        console.log(response.data);
+        this.setState({
+          searchedMovieList: response.data,
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
   searchMovie() {
-    console.log("Hello");
     axios
       .post(URL + "search/" + this.state.searchText)
       .then((response) => {
@@ -29,12 +43,21 @@ class Home extends React.Component {
   renderSearchedMovieList() {
     return (
       <div>
-        {this.state.searchedMovieList.map((movie, index) => {
-          <div>
-            <p>{movie.l}</p>
-            <img src={movie.i.imageURL} />
-          </div>;
-        })}
+        {this.state.searchedMovieList.map(
+          (movie, index) =>
+            movie.i != undefined && (
+              <div>
+                <p
+                  onClick={(movie) => {
+                    this.handleMovie(movie);
+                  }}
+                >
+                  {movie.l}
+                </p>
+                <img src={movie.i.imageUrl} />
+              </div>
+            )
+        )}
       </div>
     );
   }
