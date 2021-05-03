@@ -2,6 +2,7 @@ import requests
 import json
 
 from flask import Flask
+from flask import request
 from flask_pymongo import PyMongo
 import pymongo
 
@@ -28,13 +29,13 @@ def search(name):
 
 @app.route('/display/<id>', methods=['POST', 'GET'])
 def display(id):
-    data = request.get_json()
+    data = request.json
     movie = movieCollection.find_one({'id': id})
-    foundUser = userCollection.find_one({'userID': data.user})
+    foundUser = userCollection.find_one({'userID': data["user"]})
     if not foundUser:
         foundUser = userCollection.insert_one(
-            {'userID': data.user, 'movies': []})
-    foundUser.movies.append(id)
+            {'userID': data["user"], 'movies': []})
+    foundUser["movies"].append(id)
     if not movie:
         movie = movieCollection.insert_one(
             {'id': id, 'rating': {'userCount': 0, 'ratings': 0}, 'comments': []})
@@ -44,9 +45,9 @@ def display(id):
 
 @app.route('/comment', methods=['POST', 'GET'])
 def comment():
-    data = request.get_json()
-    foundInMovies = movieCollection.find_one({'id': data.movieID})
-    foundInMovies.comments.append(data.comment)
+    data = request.json
+    foundInMovies = movieCollection.find_one({'id': data["movieID"]})
+    foundInMovies["comments"].append(data["comment"])
     return foundInMovies
 
 # @app.route('/rate', methods=['POST', 'GET'])
