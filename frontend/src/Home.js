@@ -12,16 +12,14 @@ class Home extends React.Component {
     this.searchMovie = this.searchMovie.bind(this);
     this.renderSearchedMovieList = this.renderSearchedMovieList.bind(this);
     this.state.searchedMovieList = [];
+    this.state.
   }
 
   handleMovie(movie) {
     axios
       .post(URL + "display/" + movie.id)
       .then((response) => {
-        console.log(response.data);
-        this.setState({
-          searchedMovieList: response.data,
-        });
+        
       })
       .catch(function (error) {
         console.log(error);
@@ -48,7 +46,7 @@ class Home extends React.Component {
             movie.i != undefined && (
               <div>
                 <p
-                  onClick={(movie) => {
+                  onClick={() => {
                     this.handleMovie(movie);
                   }}
                 >
