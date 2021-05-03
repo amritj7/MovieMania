@@ -7,19 +7,30 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = [];
+    this.state.user = localStorage.getItem("data").split("@")[0];
     this.history = this.props.history;
     this.state.searchText = "";
     this.searchMovie = this.searchMovie.bind(this);
     this.renderSearchedMovieList = this.renderSearchedMovieList.bind(this);
     this.state.searchedMovieList = [];
-    this.state.
+    this.state.movieData = "";
   }
 
   handleMovie(movie) {
     axios
-      .post(URL + "display/" + movie.id)
+      .post(URL + "display/" + movie.id, { user: this.state.user })
       .then((response) => {
-        
+        this.setState(
+          {
+            movieData: response.data,
+          },
+          () => {
+            this.history.push({
+              pathname: "./Movie",
+              state: { movie: movie, movieData: this.state.movieData },
+            });
+          }
+        );
       })
       .catch(function (error) {
         console.log(error);
@@ -82,7 +93,7 @@ class Home extends React.Component {
   render() {
     return (
       <div>
-        <p>{localStorage.getItem("data").split("@")[0]}</p>
+        <p>{this.state.user}</p>
         <GoogleLogout
           clientId="427815533001-pfdvja4nu5kc7dp33j48b7c2e9vcvvta.apps.googleusercontent.com"
           buttonText="Logout"

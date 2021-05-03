@@ -10,6 +10,8 @@ app = Flask(__name__)
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["mydatabase"]
 movieCollection = mydb["movie"]
+userCollection = mydb["user"]
+
 
 @app.route('/search/<name>', methods=['POST', 'GET'])
 def search(name):
@@ -23,28 +25,29 @@ def search(name):
         "GET", url, headers=headers, params=querystring)
     return json.dumps(response.json()['d'][:5])
 
+
 @app.route('/display/<id>', methods=['POST', 'GET'])
 def display(id):
-    movie = movieCollection.find_one({'id' : id})
+    data = request.get_json()
+    movie = movieCollection.find_one({'id': id})
+    foundUser = userCollection.find_one({'userID': data.user})
+    if not foundUser:
+        foundUser = userCollection.insert_one(
+            {'userID': data.user, 'movies': []})
+    foundUser.movies.append(id)
     if not movie:
-        movie = movieCollection.insert_one({'id' : id, 'rating' : {'userCount' : 0, 'ratings' : 0}, 'comments' : []})
+        movie = movieCollection.insert_one(
+            {'id': id, 'rating': {'userCount': 0, 'ratings': 0}, 'comments': []})
     del movie["_id"]
     return movie
 
 
-
-# @app.route('/comment', methods=['POST', 'GET'])
-# def comment():
-# 	data = request.get_json()
-# 	foundInMovies = mongo.db.movie.find_one({'id' : data.movieID})
-# 	user = mongo.db.movie.find_one({'userID' : data.userID})
-# 	if not data.movieID in user.movies :
-# 		user.movies.append(data.movieID)
-# 	if foundInMovies :
-# 		foundInMovies.comments.append(data.comment)
-# 	else :
-# 		mongo.db.movie.insert_one({'id' : data.movieID, 'rating' : {0, 0}, 'comments' : [{data.comment}]})
-#     return mongo.db.movie.find_one({'id' : data.movieID})
+@app.route('/comment', methods=['POST', 'GET'])
+def comment():
+    data = request.get_json()
+    foundInMovies = movieCollection.find_one({'id': data.movieID})
+    foundInMovies.comments.append(data.comment)
+    return foundInMovies
 
 # @app.route('/rate', methods=['POST', 'GET'])
 # def rate():
