@@ -7,7 +7,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = [];
-    this.state.user = localStorage.getItem("data").split("@")[0];
+    this.state.user = this.props.location.state.user;
     this.history = this.props.history;
     this.state.searchText = "";
     this.searchMovie = this.searchMovie.bind(this);
@@ -26,8 +26,12 @@ class Home extends React.Component {
           },
           () => {
             this.history.push({
-              pathname: "./Movie",
-              state: { movie: movie, movieData: this.state.movieData },
+              pathname: "./movie",
+              state: {
+                movie: movie,
+                movieData: this.state.movieData,
+                user: this.state.user,
+              },
             });
           }
         );
@@ -73,19 +77,18 @@ class Home extends React.Component {
   renderSearchBar() {
     return (
       <div>
-        <form>
-          <input
-            type="text"
-            id="Movie"
-            name="Movie"
-            value={this.state.searchText}
-            onChange={(e) => {
-              this.setState({
-                searchText: e.target.value,
-              });
-            }}
-          />
-        </form>
+        <input
+          type="text"
+          id="Movie"
+          name="Movie"
+          value={this.state.searchText}
+          onChange={(e) => {
+            this.setState({
+              searchText: e.target.value,
+            });
+          }}
+        />
+
         <button onClick={this.searchMovie}>Search</button>
       </div>
     );
