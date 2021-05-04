@@ -9,6 +9,7 @@ class Home extends React.Component {
     this.state = [];
     this.state.user = this.props.location.state.user;
     this.history = this.props.history;
+    this.state.userData = "";
     this.state.searchText = "";
     this.searchMovie = this.searchMovie.bind(this);
     this.renderSearchedMovieList = this.renderSearchedMovieList.bind(this);
@@ -22,7 +23,8 @@ class Home extends React.Component {
       .then((response) => {
         this.setState(
           {
-            movieData: response.data,
+            movieData: response.data.movie,
+            userData: response.data.user,
           },
           () => {
             this.history.push({
@@ -30,6 +32,7 @@ class Home extends React.Component {
               state: {
                 movie: movie,
                 movieData: this.state.movieData,
+                userData: this.state.userData,
                 user: this.state.user,
               },
             });
@@ -93,6 +96,16 @@ class Home extends React.Component {
       </div>
     );
   }
+  redirectToHistory() {
+    {
+      this.history.push({
+        pathname: "./history",
+        state: {
+          user: this.state.user,
+        },
+      });
+    }
+  }
   render() {
     return (
       <div>
@@ -102,7 +115,7 @@ class Home extends React.Component {
           buttonText="Logout"
           onLogoutSuccess={(response) => {
             //localStorage.clear();
-            this.history.goBack();
+            this.history.push("./");
           }}
           onFailure={(response) => {
             console.log(response);
@@ -110,6 +123,7 @@ class Home extends React.Component {
         ></GoogleLogout>
         {this.renderSearchBar()}
         {this.renderSearchedMovieList()}
+        <button onClick={this.redirectToHistory}>History</button>
       </div>
     );
   }

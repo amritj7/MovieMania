@@ -12,6 +12,8 @@ myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["mydatabase"]
 movieCollection = mydb["movie"]
 userCollection = mydb["user"]
+# movieCollection : { movieID, rating{userCount, value, }, comments[{userID, commentText}]}
+# userCollection : { userID, movies[{movieID}], ratedMovies[]}
 
 
 @app.route('/search/<name>', methods=['POST', 'GET'])
@@ -27,42 +29,59 @@ def search(name):
     return json.dumps(response.json()['d'][:5])
 
 
-@app.route('/display/<id>', methods=['POST', 'GET'])
-def display(id):
+@app.route('/display/<movieID>', methods=['POST', 'GET'])
+def display(movieID):
     data = request.json
-    movie = movieCollection.find_one({'id': id})
-    foundUser = userCollection.find_one({'userID': data["user"]})
+    movie = movieCollection.find_one({"movieID": movieID})
+    foundUser = userCollection.find_one({"userID": data["user"]})
     if not foundUser:
         foundUser = userCollection.insert_one(
-            {'userID': data["user"], 'movies': []})
-    foundUser["movies"].append(id)
+            {"userID": data["user"], 'movies': [], 'ratedMovies': []})
+    userCollection.update(
+        {"userID": data["user"]}, {"$push": {"movies": movieID}})
+    print(userCollection.find_one({"userID": data["user"]}))
     if not movie:
-        movie = movieCollection.insert_one(
-            {'id': id, 'rating': {'userCount': 0, 'ratings': 0}, 'comments': []})
+        movieCollection.insert_one(
+            {'movieID': movieID, 'rating': {'userCount': 0, 'value': 0}, 'comments': []})
+    movie = movieCollection.find_one({'movieID': movieID})
+    user = userCollection.find_one({"userID": data["user"]})
     del movie["_id"]
-    return movie
+    del user["_id"]
+    return {"movie": movie, "user": user}
 
 
-@app.route('/comment', methods=['POST', 'GET'])
-def comment():
+@app.route('/comment/<movieID>', methods=['POST', 'GET'])
+def comment(movieID):
+    print("hey")
     data = request.json
-    foundInMovies = movieCollection.find_one({'id': data["movieID"]})
-    foundInMovies["comments"].append(data["comment"])
+    print(data)
+    movieCollection.update(
+        {"movieID": movieID}, {"$push": {"comments": data}})
+    foundInMovies = movieCollection.find_one({'movieID': movieID})
+    del foundInMovies["_id"]
     return foundInMovies
 
-# @app.route('/rate', methods=['POST', 'GET'])
-# def rate():
-# 	data = request.get_json()
-# 	found = mongo.db.movie.find_one({'id' : data.id})
-# 	if found :
-# 		found.rating.value = (found.rating.value * found.rating.count + data.rating)/(found.rating.count + 1)
-# 		found.rating.count = found.rating.count + 1
-# 	else :
-# 		mongo.db.movie.insert_one({'id' : data.id, 'rating' : {data.rating, 1}, 'comments' : []})
-# 	return mongo.db.movie.find_one({'id' : data.id})
 
-# @app.route('/history', methods=['POST', 'GET'])
-# def history():
-# 	data = request.get_json()
-# 	user = mongo.db.user.find_one({'userID' : data.userID})
-# 	user.movies.append(data.movie)
+@app.route('/rate', methods=['POST', 'GET'])
+def rate():
+    data = request.json
+    found = movieCollection.find_one({"movieID": data["movieID"]})
+    currentRating = found["rating"]["value"]
+    currentUserCount = found["rating"]["userCount"]
+    updatedRating = (currentRating * currentUserCount +
+                     data["rating"]) / (currentUserCount + 1)
+    updatedUserCount = currentUserCount + 1
+    movieCollection.update(
+        {"movieID": data["movieID"]}, {"$set": {"rating": {"userCount": updatedUserCount, "value": updatedRating}}})
+    found = movieCollection.find_one({"movieID": data["movieID"]})
+    userCollection.update(
+        {"userID": data["user"]}, {"$push": {"ratedMovies": data["movieID"]}})
+    del found["_id"]
+    return found
+
+
+@app.route('/history', methods=['POST', 'GET'])
+def history():
+    data = request.json
+    user = mongo.db.user.find_one({'userID': data.userID})
+    user.movies.append(data.movie)
