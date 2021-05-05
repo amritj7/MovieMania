@@ -10,6 +10,8 @@ class History extends React.Component {
     this.state.userMovies = [];
     this.renderMovies = this.renderMovies.bind(this);
     this.handleMovie = this.handleMovie.bind(this);
+    this.history = this.props.history;
+    this.state.isMounted = false;
   }
   componentDidMount() {
     axios
@@ -17,10 +19,17 @@ class History extends React.Component {
         userID: this.state.user,
       })
       .then((response) => {
-        this.setState({
-          userData: response.data.userData,
-          userMovies: response.data.userMovies,
-        });
+        console.log(response.data);
+        this.setState(
+          {
+            userData: response.data.userData,
+            userMovies: response.data.userMovies,
+            isMounted: true,
+          },
+          () => {
+            console.log(this.state.userMovies);
+          }
+        );
       })
       .catch(function (error) {
         console.log(error);
@@ -47,9 +56,9 @@ class History extends React.Component {
                 this.handleMovie(userMovie);
               }}
             >
-              {userMovie.movie.l}
+              {userMovie.movie.title}
             </p>
-            <img src={userMovie.movie.i.imageUrl} />
+            <img src={userMovie.movie.image.url} />
           </div>
         ))}
       </div>

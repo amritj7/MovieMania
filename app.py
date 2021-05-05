@@ -18,15 +18,15 @@ userCollection = mydb["user"]
 
 @app.route('/search/<name>', methods=['POST', 'GET'])
 def search(name):
-    url = "https://imdb8.p.rapidapi.com/auto-complete"
-    querystring = {"q": name}
+    url = "https://imdb8.p.rapidapi.com/title/find"
+    querystring = {"q":name}
     headers = {
         'x-rapidapi-key': "319ebe4cf1msha602967cc60d6c6p1cafdbjsn7078064544f6",
         'x-rapidapi-host': "imdb8.p.rapidapi.com"
-    }
-    response = requests.request(
-        "GET", url, headers=headers, params=querystring)
-    return json.dumps(response.json()['d'][:5])
+        }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    return json.dumps(response.json()['results'][:5])
 
 
 @app.route('/display/<movieID>', methods=['POST', 'GET'])
@@ -37,9 +37,13 @@ def display(movieID):
     if not foundUser:
         foundUser = userCollection.insert_one(
             {"userID": data["user"], 'movies': [], 'ratedMovies': []})
-    userCollection.update(
-        {"userID": data["user"]}, {"$push": {"movies": movieID}})
-    print(userCollection.find_one({"userID": data["user"]}))
+    foundUser = userCollection.find_one({"userID": data["user"]}) 
+    alreadyAdded = False
+    for movieId in foundUser["movies"]:
+        alreadyAdded = alreadyAdded or movieId == movieID
+    if not alreadyAdded:
+        userCollection.update(
+            {"userID": data["user"]}, {"$push": {"movies": movieID}})
     if not movie:
         movieCollection.insert_one(
             {'movieID': movieID, 'rating': {'userCount': 0, 'value': 0}, 'comments': []})
@@ -87,17 +91,15 @@ def history():
     del userData["_id"]
     userMovies = []
     for movieID in userData["movies"] : 
-        url = "https://imdb8.p.rapidapi.com/auto-complete"
-        querystring = {"i": movieID,"r":"json"}
-
+        url = "https://imdb8.p.rapidapi.com/title/get-base"
+        querystring = {"tconst": movieID}
         headers = {
             'x-rapidapi-key': "319ebe4cf1msha602967cc60d6c6p1cafdbjsn7078064544f6",
             'x-rapidapi-host': "imdb8.p.rapidapi.com"
-            }
-
+        }
         response = requests.request("GET", url, headers=headers, params=querystring)
         print(response.text)
-        movie = response.text
+        movie = response.json()
         movieData = movieCollection.find_one({'movieID': movieID})
         del movieData["_id"]
         userMovies.append({"movie" : movie, "movieData" : movieData})

@@ -114,9 +114,8 @@ class Movie extends React.Component {
     return (
       <div>
         <button onClick={this.returnToHomePage}>Go back</button>
-        <p>Hello</p>
-        <p>{this.state.movie.l}</p>
-        <img src={this.state.movie.i.imageUrl} />
+        <p>{this.state.movie.title}</p>
+        <img src={this.state.movie.image.url} />
 
         {this.state.isRated === false && this.renderRating()}
         <p>Ratings = {this.state.movieData.rating.value}</p>

@@ -47,16 +47,16 @@ class Home extends React.Component {
       <div>
         {this.state.searchedMovieList.map(
           (movie, index) =>
-            movie.i != undefined && (
+            movie.image != undefined && (
               <div>
                 <p
                   onClick={() => {
                     this.handleMovie(movie);
                   }}
                 >
-                  {movie.l}
+                  {movie.title}
                 </p>
-                <img src={movie.i.imageUrl} />
+                <img src={movie.image.url} />
               </div>
             )
         )}
