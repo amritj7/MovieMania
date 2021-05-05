@@ -83,5 +83,23 @@ def rate():
 @app.route('/history', methods=['POST', 'GET'])
 def history():
     data = request.json
-    user = mongo.db.user.find_one({'userID': data.userID})
-    user.movies.append(data.movie)
+    userData = userCollection.find_one({'userID': data["userID"]})
+    del userData["_id"]
+    userMovies = []
+    for movieID in userData["movies"] : 
+        url = "https://imdb8.p.rapidapi.com/auto-complete"
+        querystring = {"i": movieID,"r":"json"}
+
+        headers = {
+            'x-rapidapi-key': "319ebe4cf1msha602967cc60d6c6p1cafdbjsn7078064544f6",
+            'x-rapidapi-host': "imdb8.p.rapidapi.com"
+            }
+
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        print(response.text)
+        movie = response.text
+        movieData = movieCollection.find_one({'movieID': movieID})
+        del movieData["_id"]
+        userMovies.append({"movie" : movie, "movieData" : movieData})
+    
+    return {"userData" : userData, "userMovies" : userMovies}

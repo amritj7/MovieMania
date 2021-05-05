@@ -1,13 +1,13 @@
 import axios from "axios";
 import React from "react";
-
+import URL from "./Url";
 class History extends React.Component {
   constructor(props) {
     super(props);
     this.state = [];
     this.state.user = this.props.location.state.user;
     this.state.userData = "";
-    this.state.userMovies = "";
+    this.state.userMovies = [];
     this.renderMovies = this.renderMovies.bind(this);
     this.handleMovie = this.handleMovie.bind(this);
   }

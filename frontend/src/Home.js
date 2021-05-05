@@ -3,45 +3,31 @@ import GoogleLogin from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import URL from "./Url";
 import axios from "axios";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = [];
     this.state.user = this.props.location.state.user;
     this.history = this.props.history;
-    this.state.userData = "";
     this.state.searchText = "";
     this.searchMovie = this.searchMovie.bind(this);
     this.renderSearchedMovieList = this.renderSearchedMovieList.bind(this);
+    this.redirectToHistory = this.redirectToHistory.bind(this);
     this.state.searchedMovieList = [];
-    this.state.movieData = "";
   }
 
   handleMovie(movie) {
-    axios
-      .post(URL + "display/" + movie.id, { user: this.state.user })
-      .then((response) => {
-        this.setState(
-          {
-            movieData: response.data.movie,
-            userData: response.data.user,
-          },
-          () => {
-            this.history.push({
-              pathname: "./movie",
-              state: {
-                movie: movie,
-                movieData: this.state.movieData,
-                userData: this.state.userData,
-                user: this.state.user,
-              },
-            });
-          }
-        );
-      })
-      .catch(function (error) {
-        console.log(error);
+    {
+      this.history.push({
+        pathname: "./movie",
+        state: {
+          movie: movie,
+          user: this.state.user,
+        },
       });
+    }
   }
   searchMovie() {
     axios
@@ -97,14 +83,12 @@ class Home extends React.Component {
     );
   }
   redirectToHistory() {
-    {
-      this.history.push({
-        pathname: "./history",
-        state: {
-          user: this.state.user,
-        },
-      });
-    }
+    this.history.push({
+      pathname: "./userHistory",
+      state: {
+        user: this.state.user,
+      },
+    });
   }
   render() {
     return (

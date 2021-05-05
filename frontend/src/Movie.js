@@ -7,9 +7,13 @@ class Movie extends React.Component {
     super(props);
     this.state = [];
     this.history = this.props.history;
-    this.state.movieData = this.props.location.state.movieData;
+    this.state.movieData = {
+      movieID: "",
+      rating: { userCount: 0, value: 0 },
+      comments: [],
+    };
     this.state.movie = this.props.location.state.movie;
-    this.state.userData = this.props.location.state.userData;
+    this.state.userData = { userID: "", movies: [], ratedMovies: [] };
     this.state.commentText = "";
     this.state.isRated = false;
     this.state.currentUserRating = "";
@@ -21,15 +25,29 @@ class Movie extends React.Component {
     this.handleRating = this.handleRating.bind(this);
   }
   componentDidMount() {
-    console.log(this.state.userData);
-    var israted = 0;
-    this.state.userData.ratedMovies.map((movieID) => {
-      israted = israted + (movieID === this.state.movie.id);
-    });
-    console.log(israted);
-    this.setState({
-      isRated: israted !== 0,
-    });
+    axios
+      .post(URL + "display/" + this.state.movie.id, { user: this.state.user })
+      .then((response) => {
+        console.log(response.data);
+        var israted = false;
+        this.setState(
+          {
+            userData: response.data.user,
+            movieData: response.data.movie,
+          },
+          () => {
+            this.state.userData.ratedMovies.map((movieID) => {
+              israted = israted || movieID === this.state.movie.id;
+            });
+            this.setState({
+              isRated: israted,
+            });
+          }
+        );
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
   handleComment() {
     var comment = {
@@ -68,7 +86,14 @@ class Movie extends React.Component {
       });
   }
   returnToHomePage() {
-    this.history.push("./home");
+    {
+      this.history.push({
+        pathname: "./home",
+        state: {
+          user: this.state.user,
+        },
+      });
+    }
   }
   renderRating() {
     return (
