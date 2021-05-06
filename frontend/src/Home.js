@@ -4,6 +4,7 @@ import { GoogleLogout } from "react-google-login";
 import URL from "./Url";
 import axios from "axios";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Header from "./Header";
 
 class Home extends React.Component {
   constructor(props) {
@@ -17,7 +18,6 @@ class Home extends React.Component {
     this.redirectToHistory = this.redirectToHistory.bind(this);
     this.state.searchedMovieList = [];
   }
-
   handleMovie(movie) {
     {
       this.history.push({
@@ -93,18 +93,8 @@ class Home extends React.Component {
   render() {
     return (
       <div>
+        <Header user={this.state.user} history={this.history} />
         <p>{this.state.user}</p>
-        <GoogleLogout
-          clientId="427815533001-pfdvja4nu5kc7dp33j48b7c2e9vcvvta.apps.googleusercontent.com"
-          buttonText="Logout"
-          onLogoutSuccess={(response) => {
-            //localStorage.clear();
-            this.history.push("./");
-          }}
-          onFailure={(response) => {
-            console.log(response);
-          }}
-        ></GoogleLogout>
         {this.renderSearchBar()}
         {this.renderSearchedMovieList()}
         <button onClick={this.redirectToHistory}>History</button>

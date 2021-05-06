@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import URL from "./Url";
+import Header from "./Header";
 
 class Movie extends React.Component {
   constructor(props) {
@@ -138,7 +139,12 @@ class Movie extends React.Component {
     );
   }
   render() {
-    return <div>{this.renderMovieCard()}</div>;
+    return (
+      <div>
+        <Header user={this.state.user} history={this.history} />
+        {this.renderMovieCard()}
+      </div>
+    );
   }
 }
 

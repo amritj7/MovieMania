@@ -1,6 +1,8 @@
 import axios from "axios";
 import React from "react";
 import URL from "./Url";
+import Header from "./Header";
+
 class History extends React.Component {
   constructor(props) {
     super(props);
@@ -65,7 +67,12 @@ class History extends React.Component {
     );
   }
   render() {
-    return <div>{this.renderMovies()}</div>;
+    return (
+      <div>
+        <Header user={this.state.user} history={this.history} />
+        {this.renderMovies()}
+      </div>
+    );
   }
 }
 export default History;
