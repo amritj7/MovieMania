@@ -29,10 +29,11 @@ def search(name):
     return json.dumps(response.json()['results'][:5])
 
 
-@app.route('/display/<movieID>', methods=['POST', 'GET'])
-def display(movieID):
+@app.route('/display', methods=['POST', 'GET'])
+def display():
     data = request.json
-    movie = movieCollection.find_one({"movieID": movieID})
+    movie = movieCollection.find_one({"movieID": data["movieID"]})
+    print(movie)
     foundUser = userCollection.find_one({"userID": data["user"]})
     if not foundUser:
         foundUser = userCollection.insert_one(
@@ -40,28 +41,29 @@ def display(movieID):
     foundUser = userCollection.find_one({"userID": data["user"]}) 
     alreadyAdded = False
     for movieId in foundUser["movies"]:
-        alreadyAdded = alreadyAdded or movieId == movieID
+        alreadyAdded = alreadyAdded or movieId == data["movieID"]
     if not alreadyAdded:
         userCollection.update(
-            {"userID": data["user"]}, {"$push": {"movies": movieID}})
+            {"userID": data["user"]}, {"$push": {"movies": data["movieID"]}})
     if not movie:
+        print("here")
         movieCollection.insert_one(
-            {'movieID': movieID, 'rating': {'userCount': 0, 'value': 0}, 'comments': []})
-    movie = movieCollection.find_one({'movieID': movieID})
+            {'movieID': data["movieID"], 'rating': {'userCount': 0, 'value': 0}, 'comments': []})
+    movie = movieCollection.find_one({'movieID': data["movieID"]})
     user = userCollection.find_one({"userID": data["user"]})
     del movie["_id"]
     del user["_id"]
     return {"movie": movie, "user": user}
 
 
-@app.route('/comment/<movieID>', methods=['POST', 'GET'])
-def comment(movieID):
+@app.route('/comment', methods=['POST', 'GET'])
+def comment():
     print("hey")
     data = request.json
     print(data)
     movieCollection.update(
-        {"movieID": movieID}, {"$push": {"comments": data}})
-    foundInMovies = movieCollection.find_one({'movieID': movieID})
+        {"movieID": data["movieID"]}, {"$push": {"comments": data["comment"]}})
+    foundInMovies = movieCollection.find_one({'movieID': data["movieID"]})
     del foundInMovies["_id"]
     return foundInMovies
 
@@ -70,6 +72,7 @@ def comment(movieID):
 def rate():
     data = request.json
     found = movieCollection.find_one({"movieID": data["movieID"]})
+    print(found)
     currentRating = found["rating"]["value"]
     currentUserCount = found["rating"]["userCount"]
     updatedRating = (currentRating * currentUserCount +
@@ -92,7 +95,7 @@ def history():
     userMovies = []
     for movieID in userData["movies"] : 
         url = "https://imdb8.p.rapidapi.com/title/get-base"
-        querystring = {"tconst": movieID}
+        querystring = {"tconst": movieID[7:-1]}
         headers = {
             'x-rapidapi-key': "319ebe4cf1msha602967cc60d6c6p1cafdbjsn7078064544f6",
             'x-rapidapi-host': "imdb8.p.rapidapi.com"

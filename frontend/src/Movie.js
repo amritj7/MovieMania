@@ -26,7 +26,10 @@ class Movie extends React.Component {
   }
   componentDidMount() {
     axios
-      .post(URL + "display/" + this.state.movie.id, { user: this.state.user })
+      .post(URL + "display", {
+        user: this.state.user,
+        movieID: this.state.movie.id,
+      })
       .then((response) => {
         console.log(response.data);
         var israted = false;
@@ -56,7 +59,7 @@ class Movie extends React.Component {
     };
     console.log(comment);
     axios
-      .post(URL + "comment/" + this.state.movie.id, comment)
+      .post(URL + "comment", { comment: comment, movieID: this.state.movie.id })
       .then((response) => {
         this.setState({
           movieData: response.data,
