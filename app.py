@@ -8,7 +8,9 @@ import pymongo
 
 app = Flask(__name__)
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+myclient = pymongo.MongoClient(
+    "mongodb+srv://TROSPY123:MovieMania@cluster0.g7zov.mongodb.net/mydatabase?retryWrites=true&w=majority")
+db = myclient.test
 mydb = myclient["mydatabase"]
 movieCollection = mydb["movie"]
 userCollection = mydb["user"]
@@ -19,13 +21,14 @@ userCollection = mydb["user"]
 @app.route('/search/<name>', methods=['POST', 'GET'])
 def search(name):
     url = "https://imdb8.p.rapidapi.com/title/find"
-    querystring = {"q":name}
+    querystring = {"q": name}
     headers = {
         'x-rapidapi-key': "319ebe4cf1msha602967cc60d6c6p1cafdbjsn7078064544f6",
         'x-rapidapi-host': "imdb8.p.rapidapi.com"
-        }
+    }
 
-    response = requests.request("GET", url, headers=headers, params=querystring)
+    response = requests.request(
+        "GET", url, headers=headers, params=querystring)
     return json.dumps(response.json()['results'][:5])
 
 
@@ -38,7 +41,7 @@ def display():
     if not foundUser:
         foundUser = userCollection.insert_one(
             {"userID": data["user"], 'movies': [], 'ratedMovies': []})
-    foundUser = userCollection.find_one({"userID": data["user"]}) 
+    foundUser = userCollection.find_one({"userID": data["user"]})
     alreadyAdded = False
     for movieId in foundUser["movies"]:
         alreadyAdded = alreadyAdded or movieId == data["movieID"]
@@ -93,18 +96,19 @@ def history():
     userData = userCollection.find_one({'userID': data["userID"]})
     del userData["_id"]
     userMovies = []
-    for movieID in userData["movies"] : 
+    for movieID in userData["movies"]:
         url = "https://imdb8.p.rapidapi.com/title/get-base"
         querystring = {"tconst": movieID[7:-1]}
         headers = {
             'x-rapidapi-key': "319ebe4cf1msha602967cc60d6c6p1cafdbjsn7078064544f6",
             'x-rapidapi-host': "imdb8.p.rapidapi.com"
         }
-        response = requests.request("GET", url, headers=headers, params=querystring)
+        response = requests.request(
+            "GET", url, headers=headers, params=querystring)
         print(response.text)
         movie = response.json()
         movieData = movieCollection.find_one({'movieID': movieID})
         del movieData["_id"]
-        userMovies.append({"movie" : movie, "movieData" : movieData})
-    
-    return {"userData" : userData, "userMovies" : userMovies}
+        userMovies.append({"movie": movie, "movieData": movieData})
+
+    return {"userData": userData, "userMovies": userMovies}
