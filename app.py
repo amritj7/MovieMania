@@ -75,6 +75,10 @@ def rate():
     data = request.json
     found = movieCollection.find_one({"movieID": data["movieID"]})
     print(found)
+    foundUser = userCollection.find_one({'userID': data["user"]})
+    for ratedMovie in foundUser["ratedMovies"]:
+        if ratedMovie == data["movieID"]:
+            return found
     currentRating = found["rating"]["value"]
     currentUserCount = found["rating"]["userCount"]
     updatedRating = (currentRating * currentUserCount +
