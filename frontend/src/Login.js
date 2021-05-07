@@ -29,13 +29,14 @@ class Login extends React.Component {
     return (
       <div>
         <GoogleLogin
-          clientId="427815533001-pfdvja4nu5kc7dp33j48b7c2e9vcvvta.apps.googleusercontent.com"
+          clientId="427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com"
           buttonText="Login"
           onSuccess={(response) => {
+            console.log(response);
             this.responseGoogle(response);
           }}
           onFailure={(response) => {
-            this.responseGoogle(response);
+            console.log(response);
           }}
           cookiePolicy={"single_host_origin"}
           isSignedIn={true}

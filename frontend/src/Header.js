@@ -37,7 +37,7 @@ class Header extends React.Component {
           My collection
         </button>
         <GoogleLogout
-          clientId="427815533001-pfdvja4nu5kc7dp33j48b7c2e9vcvvta.apps.googleusercontent.com"
+          clientId="427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com"
           buttonText="Logout"
           onLogoutSuccess={(response) => {
             //localStorage.clear();
