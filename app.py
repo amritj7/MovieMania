@@ -22,7 +22,7 @@ def search(name):
     url = "https://imdb8.p.rapidapi.com/title/find"
     querystring = {"q": name}
     headers = {
-        'x-rapidapi-key': "319ebe4cf1msha602967cc60d6c6p1cafdbjsn7078064544f6",
+        'x-rapidapi-key': "4a2586d5cfmsh0e60c3eb79abbbbp1aa6f1jsna9cf823a9274",
         'x-rapidapi-host': "imdb8.p.rapidapi.com"
     }
 
@@ -103,7 +103,7 @@ def history():
         url = "https://imdb8.p.rapidapi.com/title/get-base"
         querystring = {"tconst": movieID[7:-1]}
         headers = {
-            'x-rapidapi-key': "319ebe4cf1msha602967cc60d6c6p1cafdbjsn7078064544f6",
+            'x-rapidapi-key': "4a2586d5cfmsh0e60c3eb79abbbbp1aa6f1jsna9cf823a9274",
             'x-rapidapi-host': "imdb8.p.rapidapi.com"
         }
         response = requests.request(
