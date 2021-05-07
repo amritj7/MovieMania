@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import ReactDOM from "react-dom";
 import GoogleLogin from "react-google-login";
 import { GoogleLogout } from "react-google-login";
+import Header from "./Header";
 
 class Login extends React.Component {
   constructor(props) {
