@@ -9,7 +9,7 @@ import pymongo
 app = Flask(__name__)
 
 myclient = pymongo.MongoClient(
-    "mongodb+srv://TROSPY123:MovieMania@cluster0.g7zov.mongodb.net/mydatabase?retryWrites=true&w=majority")
+    "mongodb+srv://TROSPY123:MovieMania@cluster0.g7zov.mongodb.net")
 db = myclient.test
 mydb = myclient["mydatabase"]
 movieCollection = mydb["movie"]
