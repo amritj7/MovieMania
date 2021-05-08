@@ -50,6 +50,7 @@ class History extends React.Component {
     });
   }
   renderMovies() {
+    const url = "https://image.tmdb.org/t/p/w185/";
     return (
       <div>
         {this.state.userMovies.map((userMovie, index) => (
@@ -59,9 +60,9 @@ class History extends React.Component {
                 this.handleMovie(userMovie);
               }}
             >
-              {userMovie.movie.title}
+              {userMovie.movie.original_title}
             </p>
-            <img src={userMovie.movie.image.url} />
+            <img src={url + userMovie.movie.poster_path} />
           </div>
         ))}
       </div>

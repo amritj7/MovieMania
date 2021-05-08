@@ -33,7 +33,7 @@ class Header extends React.Component {
           </p>
           <p className="font-mono text-sm"></p>
         </div>
-        {/* <button
+        <button
           class="blocks text-right text-md "
           onClick={() => {
             this.history.push({
@@ -45,7 +45,8 @@ class Header extends React.Component {
           }}
         >
           My collection
-        </button> */}
+        </button>
+        <h1>{this.state.username}</h1>
         <GoogleLogout
           clientId="427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com"
           buttonText="Logout"

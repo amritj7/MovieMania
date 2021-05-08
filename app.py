@@ -97,15 +97,11 @@ def history():
     del userData["_id"]
     userMovies = []
     for movieID in userData["movies"]:
-        url = "https://imdb8.p.rapidapi.com/title/get-base"
-        querystring = {"tconst": movieID[7:-1]}
-        headers = {
-            'x-rapidapi-key': "3f9ba87618msh49c8d10e3d0175cp1181e1jsnd39817a729d7",
-            'x-rapidapi-host': "imdb8.p.rapidapi.com"
-        }
+        url = "https://api.themoviedb.org/3/find/" + \
+            movieID + \
+            "?api_key=75b7e19a0927cfef46140801a9ae825b&language=en-US&external_source=imdb_id"
         response = requests.request(
-            "GET", url, headers=headers, params=querystring)
-        print(response.text)
+            "GET", url)
         movie = response.json()
         movieData = movieCollection.find_one({'movieID': movieID})
         del movieData["_id"]

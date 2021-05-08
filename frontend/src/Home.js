@@ -44,6 +44,7 @@ class Home extends React.Component {
       });
   }
   renderSearchedMovieList() {
+    const url = "https://image.tmdb.org/t/p/w185/";
     return (
       <div>
         {this.state.searchedMovieList.map(
@@ -57,7 +58,7 @@ class Home extends React.Component {
                 >
                   {movie.original_title}
                 </p>
-                <img src={movie.poster_path} />
+                <img src={url + movie.poster_path} />
               </div>
             )
         )}
