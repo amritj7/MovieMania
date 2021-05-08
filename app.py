@@ -97,11 +97,16 @@ def history():
     del userData["_id"]
     userMovies = []
     for movieID in userData["movies"]:
-        url = "https://api.themoviedb.org/3/find/" + \
-            movieID + \
-            "?api_key=75b7e19a0927cfef46140801a9ae825b&language=en-US&external_source=imdb_id"
+        url = "https://api.themoviedb.org/3/movie/" + \
+            str(movieID) + "?api_key=75b7e19a0927cfef46140801a9ae825b"
         response = requests.request(
             "GET", url)
+
+        if response.status_code == 404:
+            url = "https://api.themoviedb.org/3/tv/" + \
+                str(movieID) + "?api_key=75b7e19a0927cfef46140801a9ae825b"
+            response = requests.request(
+                "GET", url)
         movie = response.json()
         movieData = movieCollection.find_one({'movieID': movieID})
         del movieData["_id"]

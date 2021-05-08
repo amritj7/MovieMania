@@ -60,7 +60,9 @@ class History extends React.Component {
                 this.handleMovie(userMovie);
               }}
             >
-              {userMovie.movie.original_title}
+              {userMovie.movie.original_title !== undefined
+                ? userMovie.movie.original_title
+                : userMovie.movie.name}
             </p>
             <img src={url + userMovie.movie.poster_path} />
           </div>

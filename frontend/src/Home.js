@@ -56,7 +56,9 @@ class Home extends React.Component {
                     this.handleMovie(movie);
                   }}
                 >
-                  {movie.original_title}
+                  {movie.original_title !== undefined
+                    ? movie.original_title
+                    : movie.name}
                 </p>
                 <img src={url + movie.poster_path} />
               </div>

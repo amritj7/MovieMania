@@ -119,8 +119,11 @@ class Movie extends React.Component {
     const url = "https://image.tmdb.org/t/p/w185/";
     return (
       <div>
-        <button onClick={this.returnToHomePage}>Go back</button>
-        <p>{this.state.movie.original_title}</p>
+        <p>
+          {this.state.movie.original_title !== undefined
+            ? this.state.movie.original_title
+            : this.state.movie.name}
+        </p>
         <img src={url + this.state.movie.poster_path} />
         <p>{this.state.movie.overview}</p>
         {this.state.isRated === false && this.renderRating()}
