@@ -5,9 +5,10 @@ import { GoogleLogout } from "react-google-login";
 class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = [];
     this.history = this.props.history;
     this.state.user = this.props.user;
+    this.state.username = this.props.username;
   }
   renderHeading() {}
 
@@ -18,12 +19,21 @@ class Header extends React.Component {
           <p
             className="text-4xl font-extrabold"
             style={{ "--block-accent-color": "#1DA1F2" }}
+            onClick={() => {
+              this.history.push({
+                pathname: "./home",
+                state: {
+                  user: this.state.user,
+                  username: this.state.username,
+                },
+              });
+            }}
           >
             MovieMania
           </p>
           <p className="font-mono text-sm"></p>
         </div>
-        <button
+        {/* <button
           class="blocks text-right text-md "
           onClick={() => {
             this.history.push({
@@ -35,7 +45,7 @@ class Header extends React.Component {
           }}
         >
           My collection
-        </button>
+        </button> */}
         <GoogleLogout
           clientId="427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com"
           buttonText="Logout"

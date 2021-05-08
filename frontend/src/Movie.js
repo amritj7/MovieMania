@@ -8,6 +8,7 @@ class Movie extends React.Component {
     super(props);
     this.state = [];
     this.history = this.props.history;
+    this.state.username = this.props.location.state.username;
     this.state.movieData = {
       movieID: "",
       rating: { userCount: 0, value: 0 },
@@ -141,7 +142,11 @@ class Movie extends React.Component {
   render() {
     return (
       <div>
-        <Header user={this.state.user} history={this.history} />
+        <Header
+          user={this.state.user}
+          history={this.history}
+          username={this.state.username}
+        />
         {this.renderMovieCard()}
       </div>
     );

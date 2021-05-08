@@ -11,11 +11,11 @@ class Home extends React.Component {
     super(props);
     this.state = [];
     this.state.user = this.props.location.state.user;
+    this.state.username = this.props.location.state.username;
     this.history = this.props.history;
     this.state.searchText = "";
     this.searchMovie = this.searchMovie.bind(this);
     this.renderSearchedMovieList = this.renderSearchedMovieList.bind(this);
-    this.redirectToHistory = this.redirectToHistory.bind(this);
     this.state.searchedMovieList = [];
   }
   handleMovie(movie) {
@@ -25,6 +25,7 @@ class Home extends React.Component {
         state: {
           movie: movie,
           user: this.state.user,
+          username: this.state.username,
         },
       });
     }
@@ -47,16 +48,16 @@ class Home extends React.Component {
       <div>
         {this.state.searchedMovieList.map(
           (movie, index) =>
-            movie.image != undefined && (
+            movie.poster_path != undefined && (
               <div>
                 <p
                   onClick={() => {
                     this.handleMovie(movie);
                   }}
                 >
-                  {movie.title}
+                  {movie.original_title}
                 </p>
-                <img src={movie.image.url} />
+                <img src={movie.poster_path} />
               </div>
             )
         )}
@@ -82,22 +83,18 @@ class Home extends React.Component {
       </div>
     );
   }
-  redirectToHistory() {
-    this.history.push({
-      pathname: "./userHistory",
-      state: {
-        user: this.state.user,
-      },
-    });
-  }
+
   render() {
     return (
       <div>
-        <Header user={this.state.user} history={this.history} />
+        <Header
+          user={this.state.user}
+          history={this.history}
+          username={this.state.username}
+        />
         <p>{this.state.user}</p>
         {this.renderSearchBar()}
         {this.renderSearchedMovieList()}
-        <button onClick={this.redirectToHistory}>History</button>
       </div>
     );
   }

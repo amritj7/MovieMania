@@ -25,7 +25,7 @@ def search(name):
     response = requests.request(
         "GET", url)
 
-    return response.json()
+    return json.dumps(response.json()["results"][:5])
 
 
 @app.route('/display', methods=['POST', 'GET'])
