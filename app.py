@@ -6,6 +6,7 @@ from flask import request
 from flask_pymongo import PyMongo
 import pymongo
 
+
 app = Flask(__name__)
 
 myclient = pymongo.MongoClient(
@@ -19,16 +20,12 @@ userCollection = mydb["user"]
 
 @app.route('/search/<name>', methods=['POST', 'GET'])
 def search(name):
-    url = "https://imdb8.p.rapidapi.com/title/find"
-    querystring = {"q": name}
-    headers = {
-        'x-rapidapi-key': "3f9ba87618msh49c8d10e3d0175cp1181e1jsnd39817a729d7",
-        'x-rapidapi-host': "imdb8.p.rapidapi.com"
-    }
-
+    url = "https://api.themoviedb.org/3/search/multi?api_key=75b7e19a0927cfef46140801a9ae825b&language=en-US&query=" + \
+        name + "&page=1"
     response = requests.request(
-        "GET", url, headers=headers, params=querystring)
-    return json.dumps(response.json()['results'][:5])
+        "GET", url)
+
+    return response.json()
 
 
 @app.route('/display', methods=['POST', 'GET'])
