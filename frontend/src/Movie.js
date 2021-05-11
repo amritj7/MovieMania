@@ -105,25 +105,28 @@ class Movie extends React.Component {
 
   renderComments() {
     return (
-      <div className="p-4 border bg-black">
+      <div className="p-4 border rounded-md bg-black">
         <div>
           {this.state.movieData.comments.map((comment, index) => (
             <div className="px-4 p-2 m-4 my-4 w-auto bg-gray-700 rounded-lg">
-              <p className=" text-md md:text-md w-auto text-white opacity-50 font-bold leading-tight text-center md:text-left">
-                {comment.user}
-              </p>
+              <span>
+                <p className=" text-md md:text-md  text-white opacity-50 font-bold leading-tight text-center md:text-left">
+                  <i class="fa fa-comments" aria-hidden="true"></i>{" "}
+                  {comment.user}
+                </p>
 
-              <p className="w-auto">
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                {comment.commentText}
-              </p>
+                <p className="w-auto">
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                  {comment.commentText}
+                </p>
+              </span>
             </div>
           ))}
         </div>
         <div className="p-4">
           <textarea
-            className="w-full p-2"
-            placeholder="write"
+            className="w-full p-2 rounded-md"
+            placeholder="Write here.."
             onChange={(e) => {
               this.setState({
                 commentText: e.target.value,
