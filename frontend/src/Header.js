@@ -8,7 +8,7 @@ class Header extends React.Component {
     this.state = [];
     this.history = this.props.history;
     this.state.user = this.props.user;
-    this.state.username = this.props.username;
+    this.state.profileObj = this.props.profileObj;
   }
   render() {
     return (
@@ -20,7 +20,7 @@ class Header extends React.Component {
                 pathname: "./home",
                 state: {
                   user: this.state.user,
-                  username: this.state.username,
+                  profileObj: this.state.profileObj,
                 },
               });
             }}
@@ -40,7 +40,7 @@ class Header extends React.Component {
                   pathname: "./userHistory",
                   state: {
                     user: this.state.user,
-                    username: this.state.username,
+                    profileObj: this.state.profileObj,
                   },
                 });
               }}
@@ -48,7 +48,8 @@ class Header extends React.Component {
               My collection
             </a>
             <a class="inline-block text-blue-300 no-underline hover:text-pink-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform hover:scale-125 duration-300 ease-in-out">
-              {this.state.username}
+              {this.state.profileObj !== undefined &&
+                this.state.profileObj.name}
             </a>
             <GoogleLogout
               clientId="427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com"

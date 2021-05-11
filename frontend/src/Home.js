@@ -11,7 +11,7 @@ class Home extends React.Component {
     super(props);
     this.state = [];
     this.state.user = this.props.location.state.user;
-    this.state.username = this.props.location.state.username;
+    this.state.profileObj = this.props.location.state.profileObj;
     this.history = this.props.history;
     this.state.searchText = "";
     this.searchMovie = this.searchMovie.bind(this);
@@ -25,7 +25,7 @@ class Home extends React.Component {
         state: {
           movie: movie,
           user: this.state.user,
-          username: this.state.username,
+          profileObj: this.state.profileObj,
         },
       });
     }
@@ -107,7 +107,7 @@ class Home extends React.Component {
         <Header
           user={this.state.user}
           history={this.history}
-          username={this.state.username}
+          profileObj={this.state.profileObj}
         />
 
         <div class="w-full container pt-24 md:pt-36 mx-auto flex flex-wrap flex-col md:flex-row items-center">
