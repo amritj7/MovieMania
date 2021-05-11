@@ -12,11 +12,9 @@ class Header extends React.Component {
   }
   render() {
     return (
-      <div className="bg-red  flex flex-row p-4">
-        <div className="flex-grow">
-          <p
-            className="text-4xl font-extrabold"
-            style={{ "--block-accent-color": "#1DA1F2" }}
+      <div class="w-full container mx-auto">
+        <div class="w-full flex items-center justify-between">
+          <a
             onClick={() => {
               this.history.push({
                 pathname: "./home",
@@ -26,37 +24,45 @@ class Header extends React.Component {
                 },
               });
             }}
+            class="flex items-center text-indigo-400 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
           >
-            MovieMania
-          </p>
-          <p className="font-mono text-sm"></p>
+            Movie
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">
+              Mania
+            </span>
+          </a>
+
+          <div class="flex w-1/2 justify-end content-center">
+            <a
+              class="inline-block cursor-pointer text-blue-300 no-underline hover:text-pink-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform hover:scale-125 duration-300 ease-in-out"
+              onClick={() => {
+                this.history.push({
+                  pathname: "./userHistory",
+                  state: {
+                    user: this.state.user,
+                    username: this.state.username,
+                  },
+                });
+              }}
+            >
+              My collection
+            </a>
+            <a class="inline-block text-blue-300 no-underline hover:text-pink-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform hover:scale-125 duration-300 ease-in-out">
+              {this.state.username}
+            </a>
+            <GoogleLogout
+              clientId="427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com"
+              buttonText="Logout"
+              onLogoutSuccess={(response) => {
+                //localStorage.clear();
+                this.history.push("./");
+              }}
+              onFailure={(response) => {
+                console.log(response);
+              }}
+            ></GoogleLogout>
+          </div>
         </div>
-        {/* <button
-          class="blocks text-right text-md "
-          onClick={() => {
-            this.history.push({
-              pathname: "./userHistory",
-              state: {
-                user: this.state.user,
-                username: this.state.username,
-              },
-            });
-          }}
-        >
-          My collection
-        </button> */}
-        <h1>{this.state.username}</h1>
-        <GoogleLogout
-          clientId="427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com"
-          buttonText="Logout"
-          onLogoutSuccess={(response) => {
-            //localStorage.clear();
-            this.history.push("./");
-          }}
-          onFailure={(response) => {
-            console.log(response);
-          }}
-        ></GoogleLogout>
       </div>
     );
   }
