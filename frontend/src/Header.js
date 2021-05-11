@@ -52,6 +52,14 @@ class Header extends React.Component {
                 this.state.profileObj.name}
             </a>
             <GoogleLogout
+              render={(renderProps) => (
+                <a
+                  onClick={renderProps.onClick}
+                  class="inline-block text-blue-300 no-underline cursor-pointer hover:text-pink-500 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 transform hover:scale-125 duration-300 ease-in-out"
+                >
+                  Logout
+                </a>
+              )}
               clientId="427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com"
               buttonText="Logout"
               onLogoutSuccess={(response) => {

@@ -67,6 +67,7 @@ class Movie extends React.Component {
       .then((response) => {
         this.setState({
           movieData: response.data,
+          commentText: "",
         });
       })
       .catch(function (error) {
@@ -104,16 +105,22 @@ class Movie extends React.Component {
 
   renderComments() {
     return (
-      <div className="border bg-gray-900">
+      <div className="p-4 border bg-black">
         <div>
           {this.state.movieData.comments.map((comment, index) => (
-            <div>
-              <p>{comment.user} :</p>
-              <p>{comment.commentText}</p>
+            <div className="px-4 p-2 m-4 my-4 w-auto bg-gray-700 rounded-lg">
+              <p className=" text-md md:text-md w-auto text-white opacity-50 font-bold leading-tight text-center md:text-left">
+                {comment.user}
+              </p>
+
+              <p className="w-auto">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                {comment.commentText}
+              </p>
             </div>
           ))}
         </div>
-        <div>
+        <div className="p-4">
           <textarea
             className="w-full p-2"
             placeholder="write"
@@ -124,7 +131,7 @@ class Movie extends React.Component {
             }}
             rows="2"
           ></textarea>
-          <div>
+          <div className="py-2">
             <button
               class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
               onClick={this.handleComment}
@@ -154,6 +161,12 @@ class Movie extends React.Component {
                 : this.state.movie.name}
             </p>
             <p>{this.state.movie.overview}</p>
+            <p className="pt-2">
+              Released on:{" "}
+              <span className="text-white">
+                {this.state.movie.first_air_date}
+              </span>
+            </p>
           </div>
           <div className="mb-8">
             {this.state.isRated === false && (
@@ -191,7 +204,11 @@ class Movie extends React.Component {
   render() {
     return (
       <div>
-        <Header user={this.state.user} profileObj={this.state.profileObj} />
+        <Header
+          user={this.state.user}
+          history={this.history}
+          profileObj={this.state.profileObj}
+        />
         {this.renderMovieCard()}
       </div>
     );

@@ -8,7 +8,7 @@ class History extends React.Component {
     super(props);
     this.state = [];
     this.state.user = this.props.location.state.user;
-    this.state.username = this.props.location.state.username;
+    this.state.profileObj = this.props.location.state.profileObj;
     this.state.userData = "";
     this.state.userMovies = [];
     this.renderMovies = this.renderMovies.bind(this);
@@ -83,7 +83,7 @@ class History extends React.Component {
         <Header
           user={this.state.user}
           history={this.history}
-          username={this.state.username}
+          profileObj={this.state.profileObj}
         />
         {this.renderMovies()}
       </div>
