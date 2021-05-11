@@ -8,6 +8,7 @@ module.exports = {
       red: "#BA181B",
       black: "#0B090A",
       grey: "#161A1D",
+      golden: "#ffea00",
     },
   },
   variants: {
