@@ -10,22 +10,27 @@ class Login extends React.Component {
     super(props);
     this.state = [];
     this.responseGoogle = this.responseGoogle.bind(this);
-    this.state.username = "";
+    this.state.profileObj = [];
     this.history = this.props.history;
     this.state.user = "";
   }
   responseGoogle(response) {
-    this.setState({
-      user: response.profileObj.email.split("@")[0],
-      username: response.profileObj.name,
-    });
-    this.history.push({
-      pathname: "./home",
-      state: {
-        user: this.state.user,
-        username: this.state.username,
+    this.setState(
+      {
+        user: response.profileObj.email.split("@")[0],
+        profileObj: response.profileObj,
       },
-    });
+      () => {
+        this.history.push({
+          pathname: "./home",
+          state: {
+            user: this.state.user,
+            profileObj: this.state.profileObj,
+          },
+        });
+      }
+    );
+
     console.log(response);
   }
   render() {

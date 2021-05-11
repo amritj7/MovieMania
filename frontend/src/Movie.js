@@ -9,7 +9,7 @@ class Movie extends React.Component {
     super(props);
     this.state = [];
     this.history = this.props.history;
-    this.state.username = this.props.location.state.username;
+    this.state.profileObj = this.props.location.state.profileObj;
     this.state.movieData = {
       movieID: "",
       rating: { userCount: 0, value: 0 },
@@ -25,6 +25,7 @@ class Movie extends React.Component {
     this.renderMovieCard = this.renderMovieCard.bind(this);
     this.returnToHomePage = this.returnToHomePage.bind(this);
     this.handleRating = this.handleRating.bind(this);
+    this.renderComments = this.renderComments.bind(this);
   }
   componentDidMount() {
     axios
@@ -54,6 +55,7 @@ class Movie extends React.Component {
         console.log(error);
       });
   }
+
   handleComment() {
     var comment = {
       user: this.state.user,
@@ -94,11 +96,46 @@ class Movie extends React.Component {
         pathname: "./home",
         state: {
           user: this.state.user,
+          profileObj: this.state.profileObj,
         },
       });
     }
   }
 
+  renderComments() {
+    return (
+      <div className="border bg-gray-900">
+        <div>
+          {this.state.movieData.comments.map((comment, index) => (
+            <div>
+              <p>{comment.user} :</p>
+              <p>{comment.commentText}</p>
+            </div>
+          ))}
+        </div>
+        <div>
+          <textarea
+            className="w-full p-2"
+            placeholder="write"
+            onChange={(e) => {
+              this.setState({
+                commentText: e.target.value,
+              });
+            }}
+            rows="2"
+          ></textarea>
+          <div>
+            <button
+              class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+              onClick={this.handleComment}
+            >
+              Comment
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   renderMovieCard() {
     const url = "https://image.tmdb.org/t/p/w185/";
     return (
@@ -131,7 +168,7 @@ class Movie extends React.Component {
             )}
             <p>
               <span>
-                <i class="fas fa-star text-3xl text-golden"></i>
+                <i class="fas fa-star text-3xl text-golden"></i>{" "}
               </span>
               <span className="text-3xl">
                 {this.state.movieData.rating.value}
@@ -139,27 +176,14 @@ class Movie extends React.Component {
               <span className="text-xs opacity-50">/5</span>
             </p>
             <p>
-              {this.state.movieData.rating.userCount} number of users has rated.
+              {this.state.movieData.rating.userCount}{" "}
+              {this.state.movieData.rating.userCount === 1
+                ? "user has"
+                : "users have"}{" "}
+              rated.
             </p>
           </div>
-          <div>
-            <input
-              placeholder="write"
-              onChange={(e) => {
-                this.setState({
-                  commentText: e.target.value,
-                });
-              }}
-            ></input>
-            <button onClick={this.handleComment}>Comment</button>
-            <div>
-              {this.state.movieData.comments.map((comment, index) => (
-                <p>
-                  {comment.user} : {comment.commentText}
-                </p>
-              ))}
-            </div>
-          </div>
+          {this.renderComments()}
         </div>
       </div>
     );
@@ -167,11 +191,7 @@ class Movie extends React.Component {
   render() {
     return (
       <div>
-        <Header
-          user={this.state.user}
-          history={this.history}
-          username={this.state.username}
-        />
+        <Header user={this.state.user} profileObj={this.state.profileObj} />
         {this.renderMovieCard()}
       </div>
     );
