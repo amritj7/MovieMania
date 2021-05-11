@@ -14,8 +14,8 @@ myclient = pymongo.MongoClient(
 mydb = myclient["mydatabase"]
 movieCollection = mydb["movie"]
 userCollection = mydb["user"]
-# movieCollection : { movieID, rating{userCount, value, }, comments[{userID, commentText}]}
-# userCollection : { userID, movies[{movieID}], ratedMovies[]}
+# movieCollection : { movie, rating{userCount, value}, comments[{userID, commentText}]}
+# userCollection : { userID, movies[{movie}], ratedMovies[{movie}]}
 
 
 @app.route('/search/<name>', methods=['POST', 'GET'])
@@ -31,38 +31,37 @@ def search(name):
 @app.route('/display', methods=['POST', 'GET'])
 def display():
     data = request.json
-    movie = movieCollection.find_one({"movieID": data["movieID"]})
-    print(movie)
+    foundMovie = movieCollection.find_one({"movie": data["movie"]})
+    print(data["movie"])
     foundUser = userCollection.find_one({"userID": data["user"]})
     if not foundUser:
         foundUser = userCollection.insert_one(
             {"userID": data["user"], 'movies': [], 'ratedMovies': []})
     foundUser = userCollection.find_one({"userID": data["user"]})
     alreadyAdded = False
-    for movieId in foundUser["movies"]:
-        alreadyAdded = alreadyAdded or movieId == data["movieID"]
+    for movie in foundUser["movies"]:
+        alreadyAdded = alreadyAdded or movie == data["movie"]
     if not alreadyAdded:
         userCollection.update(
-            {"userID": data["user"]}, {"$push": {"movies": data["movieID"]}})
-    if not movie:
-        print("here")
+            {"userID": data["user"]}, {"$push": {"movies": data["movie"]}})
+    if foundMovie == None:
         movieCollection.insert_one(
-            {'movieID': data["movieID"], 'rating': {'userCount': 0, 'value': 0}, 'comments': []})
-    movie = movieCollection.find_one({'movieID': data["movieID"]})
+            {'movie': data["movie"], 'rating': {'userCount': 0, 'value': 0}, 'comments': []})
+    foundMovie = movieCollection.find_one({'movie': data["movie"]})
     user = userCollection.find_one({"userID": data["user"]})
-    del movie["_id"]
+    
+    del foundMovie["_id"]
     del user["_id"]
-    return {"movie": movie, "user": user}
+    return {"movie": foundMovie, "user": user}
 
 
 @app.route('/comment', methods=['POST', 'GET'])
 def comment():
-    print("hey")
     data = request.json
     print(data)
     movieCollection.update(
-        {"movieID": data["movieID"]}, {"$push": {"comments": data["comment"]}})
-    foundInMovies = movieCollection.find_one({'movieID': data["movieID"]})
+        {"movie": data["movie"]}, {"$push": {"comments": data["comment"]}})
+    foundInMovies = movieCollection.find_one({'movie': data["movie"]})
     del foundInMovies["_id"]
     return foundInMovies
 
@@ -70,11 +69,10 @@ def comment():
 @app.route('/rate', methods=['POST', 'GET'])
 def rate():
     data = request.json
-    found = movieCollection.find_one({"movieID": data["movieID"]})
-    print(found)
+    found = movieCollection.find_one({"movie": data["movie"]})
     foundUser = userCollection.find_one({'userID': data["user"]})
     for ratedMovie in foundUser["ratedMovies"]:
-        if ratedMovie == data["movieID"]:
+        if ratedMovie == data["movie"]:
             return found
     currentRating = found["rating"]["value"]
     currentUserCount = found["rating"]["userCount"]
@@ -82,10 +80,10 @@ def rate():
                      data["rating"]) / (currentUserCount + 1)
     updatedUserCount = currentUserCount + 1
     movieCollection.update(
-        {"movieID": data["movieID"]}, {"$set": {"rating": {"userCount": updatedUserCount, "value": updatedRating}}})
-    found = movieCollection.find_one({"movieID": data["movieID"]})
+        {"movie": data["movie"]}, {"$set": {"rating": {"userCount": updatedUserCount, "value": updatedRating}}})
+    found = movieCollection.find_one({"movie": data["movie"]})
     userCollection.update(
-        {"userID": data["user"]}, {"$push": {"ratedMovies": data["movieID"]}})
+        {"userID": data["user"]}, {"$push": {"ratedMovies": data["movie"]}})
     del found["_id"]
     return found
 
@@ -96,20 +94,8 @@ def history():
     userData = userCollection.find_one({'userID': data["userID"]})
     del userData["_id"]
     userMovies = []
-    for movieID in userData["movies"]:
-        url = "https://api.themoviedb.org/3/movie/" + \
-            str(movieID) + "?api_key=75b7e19a0927cfef46140801a9ae825b"
-        response = requests.request(
-            "GET", url)
-
-        if response.status_code == 404:
-            url = "https://api.themoviedb.org/3/tv/" + \
-                str(movieID) + "?api_key=75b7e19a0927cfef46140801a9ae825b"
-            response = requests.request(
-                "GET", url)
-        movie = response.json()
-        movieData = movieCollection.find_one({'movieID': movieID})
+    for foundMovie in userData["movies"]:
+        movieData = movieCollection.find_one({'movie': foundMovie})
         del movieData["_id"]
-        userMovies.append({"movie": movie, "movieData": movieData})
-
+        userMovies.append({"movie": foundMovie, "movieData": movieData})
     return {"userData": userData, "userMovies": userMovies}
