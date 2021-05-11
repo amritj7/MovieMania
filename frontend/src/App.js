@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 function App() {
   return (
-    <div>
+    <div className="h-full">
       <Router>
         <Switch>
           <Route exact path="/" component={Login} />

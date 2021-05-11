@@ -46,7 +46,7 @@ class Home extends React.Component {
   renderSearchedMovieList() {
     const url = "https://image.tmdb.org/t/p/w185/";
     return (
-      <div>
+      <div className="bg-grey">
         {this.state.searchedMovieList.map(
           (movie, index) =>
             movie.poster_path != undefined && (
@@ -69,8 +69,9 @@ class Home extends React.Component {
   }
   renderSearchBar() {
     return (
-      <div>
+      <div className="">
         <input
+          className="w-full"
           type="text"
           id="Movie"
           name="Movie"
@@ -82,22 +83,35 @@ class Home extends React.Component {
           }}
         />
 
-        <button onClick={this.searchMovie}>Search</button>
+        <button
+          className="bg-red text-textColor w-full"
+          onClick={this.searchMovie}
+        >
+          Search
+        </button>
       </div>
     );
   }
 
   render() {
     return (
-      <div>
+      <div className="bg-black h-full w-full">
         <Header
           user={this.state.user}
           history={this.history}
           username={this.state.username}
         />
-        <p>{this.state.user}</p>
-        {this.renderSearchBar()}
-        {this.renderSearchedMovieList()}
+        <div className=" flex h-full grid grid-cols-4">
+          <div className="col-span-1"></div>
+          <div className="col-span-2">
+            <p className="text-textColor text-5xl m-5">
+              Welcome to MovieMania{" "}
+            </p>
+            {this.renderSearchBar()}
+          </div>
+        </div>
+
+        {/* {this.renderSearchedMovieList()} */}
       </div>
     );
   }

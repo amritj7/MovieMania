@@ -12,7 +12,7 @@ class Header extends React.Component {
   }
   render() {
     return (
-      <div className="bg-gray-200  flex flex-row p-4">
+      <div className="bg-red  flex flex-row p-4">
         <div className="flex-grow">
           <p
             className="text-4xl font-extrabold"
