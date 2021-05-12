@@ -10,7 +10,7 @@ import pymongo
 
 app = Flask(__name__)
 cors = CORS(app, resources={
-            r"*": {"origins": "http://localhost:3000, https://xmovie-maniax.netlify.app"}})
+            r"*": {"origins": "*"}})
 myclient = pymongo.MongoClient(
     "mongodb+srv://MovieMania:MovieMania@cluster0.g7zov.mongodb.net/mydatabase?retryWrites=true&w=majority")
 mydb = myclient["mydatabase"]
@@ -21,6 +21,7 @@ userCollection = mydb["user"]
 
 
 @app.route('/search/<name>', methods=['POST', 'GET'])
+@cross_origin()
 def search(name):
     url = "https://api.themoviedb.org/3/search/multi?api_key=75b7e19a0927cfef46140801a9ae825b&language=en-US&query=" + \
         name + "&page=1"
@@ -31,6 +32,7 @@ def search(name):
 
 
 @app.route('/display', methods=['POST', 'GET'])
+@cross_origin()
 def display():
     data = request.json
     foundMovie = movieCollection.find_one({"movie": data["movie"]})
@@ -58,6 +60,7 @@ def display():
 
 
 @app.route('/comment', methods=['POST', 'GET'])
+@cross_origin()
 def comment():
     data = request.json
     print(data)
@@ -69,6 +72,7 @@ def comment():
 
 
 @app.route('/rate', methods=['POST', 'GET'])
+@cross_origin()
 def rate():
     data = request.json
     found = movieCollection.find_one({"movie": data["movie"]})
@@ -91,6 +95,7 @@ def rate():
 
 
 @app.route('/history', methods=['POST', 'GET'])
+@cross_origin()
 def history():
     data = request.json
     userData = userCollection.find_one({'userID': data["userID"]})
