@@ -10,7 +10,7 @@ import pymongo
 
 app = Flask(__name__)
 cors = CORS(app, resources={
-            r"*": {"origins": "*"}})
+            r"*": {"origins": "http://localhost:3000,https://xmovie-xmania.netlify.app"}})
 myclient = pymongo.MongoClient(
     "mongodb+srv://MovieMania:MovieMania@cluster0.g7zov.mongodb.net/mydatabase?retryWrites=true&w=majority")
 mydb = myclient["mydatabase"]
