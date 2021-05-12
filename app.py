@@ -4,13 +4,13 @@ import json
 from flask import Flask
 from flask import request
 from flask_pymongo import PyMongo
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import pymongo
 
 
 app = Flask(__name__)
 cors = CORS(app, resources={
-            r"/api/*": {"origins": "https://xmovie-maniax.netlify.app"}})
+            r"*": {"origins": "http://localhost:3000, https://xmovie-maniax.netlify.app"}})
 myclient = pymongo.MongoClient(
     "mongodb+srv://MovieMania:MovieMania@cluster0.g7zov.mongodb.net/mydatabase?retryWrites=true&w=majority")
 mydb = myclient["mydatabase"]
@@ -20,7 +20,6 @@ userCollection = mydb["user"]
 # userCollection : { userID, movies[{movie}], ratedMovies[{movie}]}
 
 
-@cross_origin()
 @app.route('/search/<name>', methods=['POST', 'GET'])
 def search(name):
     url = "https://api.themoviedb.org/3/search/multi?api_key=75b7e19a0927cfef46140801a9ae825b&language=en-US&query=" + \

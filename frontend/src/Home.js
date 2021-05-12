@@ -13,6 +13,7 @@ class Home extends React.Component {
     this.state.user = this.props.location.state.user;
     this.state.profileObj = this.props.location.state.profileObj;
     this.history = this.props.history;
+    this.state.isLoading = false;
     this.state.searchText = "";
     this.searchMovie = this.searchMovie.bind(this);
     this.renderSearchedMovieList = this.renderSearchedMovieList.bind(this);
@@ -31,6 +32,9 @@ class Home extends React.Component {
     }
   }
   searchMovie() {
+    this.setState({
+      isLoading: true,
+    });
     axios
       .post(URL + "search/" + this.state.searchText)
       .then((response) => {
@@ -41,6 +45,11 @@ class Home extends React.Component {
       })
       .catch(function (error) {
         console.log(error);
+      })
+      .then((response) => {
+        this.setState({
+          isLoading: false,
+        });
       });
   }
   renderSearchedMovieList() {
@@ -70,7 +79,15 @@ class Home extends React.Component {
   }
   renderSearchBar() {
     return (
-      <form class="bg-gray-900 opacity-75 w-4/5 shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+      <form
+        class="bg-gray-900 opacity-75 w-4/5 shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 "
+        onKeyPress={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            this.searchMovie();
+          }
+        }}
+      >
         <div class="mb-4">
           <label class="block text-blue-300 py-2 font-bold mb-2">
             Search for movies, TV shows
@@ -89,13 +106,17 @@ class Home extends React.Component {
         </div>
 
         <div class="flex items-center justify-between pt-4">
-          <button
-            class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
-            type="button"
-            onClick={this.searchMovie}
-          >
-            Search
-          </button>
+          {this.state.isLoading === false ? (
+            <button
+              class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+              type="button"
+              onClick={this.searchMovie}
+            >
+              Search
+            </button>
+          ) : (
+            <i class="fas fa-circle-notch fa-2x fa-spin"></i>
+          )}
         </div>
       </form>
     );
@@ -128,9 +149,11 @@ class Home extends React.Component {
           <div class="w-full pt-16 pb-6 text-sm text-center md:text-left fade-in">
             <a class="text-gray-500 no-underline hover:no-underline" href="#">
               &copy;
+            </a>{" "}
+            Created by{" "}
+            <a class="text-gray-500 no-underline hover:no-underline">
+              Amritansh and Aryan
             </a>
-            - Created by -
-            <a class="text-gray-500 no-underline hover:no-underline">Aryan</a>
           </div>
         </div>
       </div>

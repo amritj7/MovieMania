@@ -10,6 +10,7 @@ class History extends React.Component {
     this.state.user = this.props.location.state.user;
     this.state.profileObj = this.props.location.state.profileObj;
     this.state.userData = "";
+    this.state.isLoading = false;
     this.state.userMovies = [];
     this.renderMovies = this.renderMovies.bind(this);
     this.handleMovie = this.handleMovie.bind(this);

@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 function App() {
   return (
-    <div className="h-full">
+    <div className="h-full ">
       <Router>
         <Switch>
           <Route exact path="/" component={Login} />
@@ -20,6 +20,3 @@ function App() {
   );
 }
 export default App;
-
-//Client id : 427815533001-pfdvja4nu5kc7dp33j48b7c2e9vcvvta.apps.googleusercontent.com
-//Client key : HgXzHFC-1lZmRpyVGqbYymfS

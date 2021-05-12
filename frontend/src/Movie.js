@@ -19,7 +19,10 @@ class Movie extends React.Component {
     this.state.userData = { userID: "", movies: [], ratedMovies: [] };
     this.state.commentText = "";
     this.state.isRated = false;
+    this.state.rateLoading = false;
+    this.state.isLoading = true;
     this.state.currentUserRating = "";
+    this.state.commentLoading = false;
     this.state.user = this.props.location.state.user;
     this.handleComment = this.handleComment.bind(this);
     this.renderMovieCard = this.renderMovieCard.bind(this);
@@ -47,6 +50,7 @@ class Movie extends React.Component {
             });
             this.setState({
               isRated: israted,
+              isLoading: false,
             });
           }
         );
@@ -61,6 +65,9 @@ class Movie extends React.Component {
       user: this.state.user,
       commentText: this.state.commentText,
     };
+    this.setState({
+      commentLoading: true,
+    });
     console.log(comment);
     axios
       .post(URL + "comment", { comment: comment, movie: this.state.movie })
@@ -72,9 +79,17 @@ class Movie extends React.Component {
       })
       .catch(function (error) {
         console.log(error);
+      })
+      .then((response) => {
+        this.setState({
+          commentLoading: false,
+        });
       });
   }
   handleRating(newRating) {
+    this.setState({
+      rateLoading: true,
+    });
     axios
       .post(URL + "rate", {
         movie: this.state.movie,
@@ -89,6 +104,11 @@ class Movie extends React.Component {
       })
       .catch(function (error) {
         console.log(error);
+      })
+      .then((response) => {
+        this.setState({
+          rateLoading: false,
+        });
       });
   }
   returnToHomePage() {
@@ -127,20 +147,31 @@ class Movie extends React.Component {
           <textarea
             className="w-full p-2 rounded-md"
             placeholder="Write here.."
+            value={this.state.commentText}
             onChange={(e) => {
               this.setState({
                 commentText: e.target.value,
               });
             }}
             rows="2"
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                this.handleComment();
+              }
+            }}
           ></textarea>
           <div className="py-2">
-            <button
-              class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
-              onClick={this.handleComment}
-            >
-              Comment
-            </button>
+            {this.state.commentLoading === false ? (
+              <button
+                class="bg-gradient-to-r from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 text-white font-bold py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+                onClick={this.handleComment}
+              >
+                Comment
+              </button>
+            ) : (
+              <i class="fas fa-circle-notch fa-2x fa-spin"></i>
+            )}
           </div>
         </div>
       </div>
@@ -182,22 +213,28 @@ class Movie extends React.Component {
                 activeColor="#ffd700"
               />
             )}
-            <p>
-              <span>
-                <i class="fas fa-star text-3xl text-golden"></i>{" "}
-              </span>
-              <span className="text-3xl">
-                {this.state.movieData.rating.value}
-              </span>
-              <span className="text-xs opacity-50">/5</span>
-            </p>
-            <p>
-              {this.state.movieData.rating.userCount}{" "}
-              {this.state.movieData.rating.userCount === 1
-                ? "user has"
-                : "users have"}{" "}
-              rated.
-            </p>
+            {this.state.rateLoading === false ? (
+              <div>
+                <p>
+                  <span>
+                    <i class="fas fa-star text-3xl text-golden"></i>{" "}
+                  </span>
+                  <span className="text-3xl">
+                    {this.state.movieData.rating.value}
+                  </span>
+                  <span className="text-xs opacity-50">/5</span>
+                </p>
+                <p>
+                  {this.state.movieData.rating.userCount}{" "}
+                  {this.state.movieData.rating.userCount === 1
+                    ? "user has"
+                    : "users have"}{" "}
+                  rated.
+                </p>{" "}
+              </div>
+            ) : (
+              <i class="fas fa-circle-notch fa-spin"></i>
+            )}
           </div>
           {this.renderComments()}
         </div>
@@ -206,14 +243,16 @@ class Movie extends React.Component {
   }
   render() {
     return (
-      <div>
-        <Header
-          user={this.state.user}
-          history={this.history}
-          profileObj={this.state.profileObj}
-        />
-        {this.renderMovieCard()}
-      </div>
+      this.state.isLoading === false && (
+        <div>
+          <Header
+            user={this.state.user}
+            history={this.history}
+            profileObj={this.state.profileObj}
+          />
+          {this.renderMovieCard()}
+        </div>
+      )
     );
   }
 }
