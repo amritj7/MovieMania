@@ -115,12 +115,12 @@ class Home extends React.Component {
             <h1 class="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center md:text-left">
               Welcome to
               <span class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-pink-500 to-purple-500">
+                {" "}
                 MovieMania
               </span>
             </h1>
             <p class="leading-normal text-base md:text-2xl mb-8 text-center md:text-left">
-              Sub-hero message, not too long and not too short. Make it just
-              right!
+              Your one stop for all things cinematic!
             </p>
             {this.renderSearchBar()}
           </div>
@@ -130,9 +130,7 @@ class Home extends React.Component {
               &copy;
             </a>
             - Created by -
-            <a class="text-gray-500 no-underline hover:no-underline">
-              Amritansh and Aryan
-            </a>
+            <a class="text-gray-500 no-underline hover:no-underline">Aryan</a>
           </div>
         </div>
       </div>

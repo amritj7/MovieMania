@@ -4,11 +4,12 @@ import json
 from flask import Flask
 from flask import request
 from flask_pymongo import PyMongo
+from flask_cors import CORS
 import pymongo
 
 
 app = Flask(__name__)
-
+cors = CORS(app, resources={r"/api/*": {"origins": "https://xmovie-maniax.netlify.app"}})
 myclient = pymongo.MongoClient(
     "mongodb+srv://MovieMania:MovieMania@cluster0.g7zov.mongodb.net/mydatabase?retryWrites=true&w=majority")
 mydb = myclient["mydatabase"]
