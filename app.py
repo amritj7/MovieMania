@@ -82,15 +82,10 @@ def rate():
             return found
     currentRating = found["rating"]["value"]
     currentUserCount = found["rating"]["userCount"]
-<<<<<<< HEAD
-    updatedRating = (currentRating * currentUserCount +
-                     data["rating"]) / (currentUserCount + 1)
-    updatedRating = format(updatedRating, '.2f')
-=======
     updatedRating = float((float(currentRating) * float(currentUserCount) +
-                     float(data["rating"])) / float((currentUserCount + 1)))
+                           float(data["rating"])) / float((currentUserCount + 1)))
     updatedRating = format(updatedRating, '.1f')
->>>>>>> 4a163ca1f264690c75c1576556e478a6df862946
+
     updatedUserCount = currentUserCount + 1
     movieCollection.update(
         {"movie": data["movie"]}, {"$set": {"rating": {"userCount": updatedUserCount, "value": updatedRating}}})
