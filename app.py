@@ -82,8 +82,8 @@ def rate():
             return found
     currentRating = found["rating"]["value"]
     currentUserCount = found["rating"]["userCount"]
-    updatedRating = (currentRating * currentUserCount +
-                     data["rating"]) / (currentUserCount + 1)
+    updatedRating = float((float(currentRating) * float(currentUserCount) +
+                     float(data["rating"])) / float((currentUserCount + 1)))
     updatedRating = format(updatedRating, '.1f')
     updatedUserCount = currentUserCount + 1
     movieCollection.update(
