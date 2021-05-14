@@ -9,6 +9,7 @@ class History extends React.Component {
     this.state = [];
     this.state.user = this.props.location.state.user;
     this.state.profileObj = this.props.location.state.profileObj;
+    this.state.secretPhrase = this.props.location.state.secretPhrase;
     this.state.userData = "";
     this.state.isLoading = false;
     this.state.userMovies = [];
@@ -20,7 +21,8 @@ class History extends React.Component {
   componentDidMount() {
     axios
       .post(URL + "history", {
-        userID: this.state.user,
+        user: this.state.user,
+        secretPhrase: this.state.secretPhrase,
       })
       .then((response) => {
         console.log(response.data);
@@ -47,6 +49,7 @@ class History extends React.Component {
         movieData: userMovie.movieData,
         userData: this.state.userData,
         user: this.state.user,
+        secretPhrase: this.state.secretPhrase,
       },
     });
   }
@@ -85,6 +88,7 @@ class History extends React.Component {
           user={this.state.user}
           history={this.history}
           profileObj={this.state.profileObj}
+          secretPhrase={this.state.secretPhrase}
         />
         {this.renderMovies()}
       </div>

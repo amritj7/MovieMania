@@ -1,37 +1,51 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import ReactDOM from "react-dom";
+import axios from "axios";
 import GoogleLogin from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import Header from "./Header";
+import URL from "./Url";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = [];
     this.responseGoogle = this.responseGoogle.bind(this);
-    this.state.isLoggedIn = false;
     this.state.profileObj = [];
     this.history = this.props.history;
     this.state.user = "";
+    this.state.secretPhrase = "";
   }
   responseGoogle(response) {
-    this.setState(
-      {
-        user: response.profileObj.email.split("@")[0],
-        profileObj: response.profileObj,
-        isLoggedIn: true,
-      },
-      () => {
-        this.history.push({
-          pathname: "./home",
-          state: {
-            user: this.state.user,
-            profileObj: this.state.profileObj,
+    axios
+      .post(URL + "auth", {
+        token: response,
+      })
+      .then((res) => {
+        this.setState(
+          {
+            user: response.profileObj.email,
+            profileObj: response.profileObj,
+            isLoggedIn: true,
+            secretPhrase: res.data.secretPhrase,
           },
-        });
-      }
-    );
+          () => {
+            this.history.push({
+              pathname: "./home",
+              state: {
+                user: this.state.user,
+                profileObj: this.state.profileObj,
+                secretPhrase: this.state.secretPhrase,
+              },
+            });
+          }
+        );
+      })
+      .catch(function (error) {
+        // this.history.push("./");
+        console.log(error);
+      });
 
     console.log(response);
   }

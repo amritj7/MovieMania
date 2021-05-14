@@ -9,6 +9,7 @@ class Header extends React.Component {
     this.history = this.props.history;
     this.state.user = this.props.user;
     this.state.profileObj = this.props.profileObj;
+    this.state.secretPhrase = this.props.secretPhrase;
   }
   render() {
     return (
@@ -21,6 +22,7 @@ class Header extends React.Component {
                 state: {
                   user: this.state.user,
                   profileObj: this.state.profileObj,
+                  secretPhrase: this.state.secretPhrase,
                 },
               });
             }}
@@ -41,6 +43,7 @@ class Header extends React.Component {
                   state: {
                     user: this.state.user,
                     profileObj: this.state.profileObj,
+                    secretPhrase: this.state.secretPhrase,
                   },
                 });
               }}

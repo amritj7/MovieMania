@@ -10,6 +10,7 @@ class Movie extends React.Component {
     this.state = [];
     this.history = this.props.history;
     this.state.profileObj = this.props.location.state.profileObj;
+    this.state.secretPhrase = this.props.location.state.secretPhrase;
     this.state.movieData = {
       movieID: "",
       rating: { userCount: 0, value: 0 },
@@ -26,7 +27,6 @@ class Movie extends React.Component {
     this.state.user = this.props.location.state.user;
     this.handleComment = this.handleComment.bind(this);
     this.renderMovieCard = this.renderMovieCard.bind(this);
-    this.returnToHomePage = this.returnToHomePage.bind(this);
     this.handleRating = this.handleRating.bind(this);
     this.renderComments = this.renderComments.bind(this);
   }
@@ -35,6 +35,7 @@ class Movie extends React.Component {
       .post(URL + "display", {
         user: this.state.user,
         movie: this.state.movie,
+        secretPhrase: this.state.secretPhrase,
       })
       .then((response) => {
         console.log(response.data);
@@ -56,6 +57,7 @@ class Movie extends React.Component {
         );
       })
       .catch(function (error) {
+        this.history.push("./");
         console.log(error);
       });
   }
@@ -70,7 +72,12 @@ class Movie extends React.Component {
     });
     console.log(comment);
     axios
-      .post(URL + "comment", { comment: comment, movie: this.state.movie })
+      .post(URL + "comment", {
+        comment: comment,
+        movie: this.state.movie,
+        user: this.state.user,
+        secretPhrase: this.state.secretPhrase,
+      })
       .then((response) => {
         this.setState({
           movieData: response.data,
@@ -95,6 +102,7 @@ class Movie extends React.Component {
         movie: this.state.movie,
         rating: newRating,
         user: this.state.user,
+        secretPhrase: this.state.secretPhrase,
       })
       .then((response) => {
         this.setState({
@@ -110,17 +118,6 @@ class Movie extends React.Component {
           rateLoading: false,
         });
       });
-  }
-  returnToHomePage() {
-    {
-      this.history.push({
-        pathname: "./home",
-        state: {
-          user: this.state.user,
-          profileObj: this.state.profileObj,
-        },
-      });
-    }
   }
 
   renderComments() {
@@ -249,6 +246,7 @@ class Movie extends React.Component {
             user={this.state.user}
             history={this.history}
             profileObj={this.state.profileObj}
+            secretPhrase={this.state.secretPhrase}
           />
           {this.renderMovieCard()}
         </div>

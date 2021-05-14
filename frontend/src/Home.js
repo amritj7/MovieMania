@@ -12,6 +12,7 @@ class Home extends React.Component {
     this.state = [];
     this.state.user = this.props.location.state.user;
     this.state.profileObj = this.props.location.state.profileObj;
+    this.state.secretPhrase = this.props.location.state.secretPhrase;
     this.history = this.props.history;
     this.state.isLoading = false;
     this.state.searchText = "";
@@ -27,6 +28,7 @@ class Home extends React.Component {
           movie: movie,
           user: this.state.user,
           profileObj: this.state.profileObj,
+          secretPhrase: this.state.secretPhrase,
         },
       });
     }
@@ -129,6 +131,7 @@ class Home extends React.Component {
           user={this.state.user}
           history={this.history}
           profileObj={this.state.profileObj}
+          secretPhrase={this.state.secretPhrase}
         />
 
         <div class="w-full container pt-24 md:pt-36 mx-auto flex flex-wrap flex-col md:flex-row items-center">

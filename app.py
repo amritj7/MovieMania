@@ -1,11 +1,16 @@
 import requests
 import json
 
+from google.oauth2 import id_token
+from google.auth.transport import requests as req
 from flask import Flask
 from flask import request
+from flask import abort
 from flask_pymongo import PyMongo
 from flask_cors import CORS, cross_origin
 import pymongo
+import secrets
+import string
 
 
 app = Flask(__name__)
@@ -17,8 +22,27 @@ mydb = myclient["mydatabase"]
 movieCollection = mydb["movie"]
 userCollection = mydb["user"]
 # movieCollection : { movie, rating{userCount, value}, comments[{userID, commentText}]}
-# userCollection : { userID, movies[{movie}], ratedMovies[{movie}]}
+# userCollection : { secretPhrase, userID, movies[{movie}], ratedMovies[{movie}]}
 
+@app.route('/auth', methods=['POST', 'GET'])
+@cross_origin()
+def auth():
+    data = request.json
+    data = data["token"]
+    try:
+        idinfo = id_token.verify_oauth2_token(data["tokenObj"]["id_token"], req.Request(), "427815533001-v7anb53c19e0n5a0ru1af933v24e3mev.apps.googleusercontent.com")
+        foundUser = userCollection.find_one({"userID": data["profileObj"]["email"]})
+        if not foundUser:
+            #generate string and insert user
+            res = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                                                  for i in range(15))
+            res = str(res)
+            userCollection.insert_one({"userID": data["profileObj"]["email"], "movies": [], "ratedMovies": [], "secretPhrase" : res})
+            foundUser = userCollection.find_one({"userID": data["profileObj"]["email"]})
+        del foundUser["_id"]    
+        return foundUser
+    except ValueError:
+        abort(404)                                   
 
 @app.route('/search/<name>', methods=['POST', 'GET'])
 @cross_origin()
@@ -36,12 +60,9 @@ def search(name):
 def display():
     data = request.json
     foundMovie = movieCollection.find_one({"movie": data["movie"]})
-    print(data["movie"])
     foundUser = userCollection.find_one({"userID": data["user"]})
-    if not foundUser:
-        foundUser = userCollection.insert_one(
-            {"userID": data["user"], 'movies': [], 'ratedMovies': []})
-    foundUser = userCollection.find_one({"userID": data["user"]})
+    if not foundUser["secretPhrase"] == data["secretPhrase"]:
+        abort(404)
     alreadyAdded = False
     for movie in foundUser["movies"]:
         alreadyAdded = alreadyAdded or movie == data["movie"]
@@ -63,7 +84,9 @@ def display():
 @cross_origin()
 def comment():
     data = request.json
-    print(data)
+    foundUser = userCollection.find_one({"userID": data["user"]})
+    if not foundUser["secretPhrase"] == data["secretPhrase"]:
+        abort(404)
     movieCollection.update(
         {"movie": data["movie"]}, {"$push": {"comments": data["comment"]}})
     foundInMovies = movieCollection.find_one({'movie': data["movie"]})
@@ -77,6 +100,8 @@ def rate():
     data = request.json
     found = movieCollection.find_one({"movie": data["movie"]})
     foundUser = userCollection.find_one({'userID': data["user"]})
+    if not foundUser["secretPhrase"] == data["secretPhrase"]:
+        abort(404)
     for ratedMovie in foundUser["ratedMovies"]:
         if ratedMovie == data["movie"]:
             return found
@@ -100,7 +125,9 @@ def rate():
 @cross_origin()
 def history():
     data = request.json
-    userData = userCollection.find_one({'userID': data["userID"]})
+    userData = userCollection.find_one({'userID': data["user"]})
+    if not userData["secretPhrase"] == data["secretPhrase"]:
+        abort(404)
     del userData["_id"]
     userMovies = []
     for foundMovie in userData["movies"]:
