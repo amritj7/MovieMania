@@ -155,7 +155,7 @@ class Home extends React.Component {
             </a>{" "}
             Created by{" "}
             <a class="text-gray-500 no-underline hover:no-underline">
-              Amritansh and Aryan
+              Amritansh and Priyanka
             </a>
           </div>
         </div>
